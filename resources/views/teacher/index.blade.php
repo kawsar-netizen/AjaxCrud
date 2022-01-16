@@ -8,7 +8,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Ajax Crud operation</title>
     <link rel="stylesheet" href="{{ asset('css') }}/app.css">
+    <link rel="stylesheet" href="sweetalert2.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="sweetalert2.all.min.js"></script>
+    <script src="sweetalert2.min.js"></script>
 </head>
 
 <body>
@@ -33,17 +36,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{-- <tr>
-                                        <td>1</td>
-                                        <td>Kawser</td>
-                                        <td>Developer</td>
-                                        <td>Digital Decoder Ltd.</td>
-                                        <td>
 
-                                            <button type="submit" class="btn btn-primary btn-sm">edit</button>
-                                            <button type="submit" class="btn btn-danger btn-sm">delete</button>
-                                        </td>
-                                    </tr> --}}
                                 </tbody>
                             </table>
                         </div>
@@ -71,10 +64,11 @@
                                 <input type="text" class="form-control" id="institute" placeholder="Institute Name">
                                 <span class="text-danger" id="instituteError"></span>
                             </div><br>
-
+                            <input type="hidden" id="id">
                             <button type="submit" id="addB" onclick="addDate()"
                                 class="btn btn-primary btn-sm">Add</button>
-                            <button type="submit" id="updateB" class="btn btn-primary btn-sm">Update</button>
+                            <button type="submit" id="updateB" onclick="updateDate()"
+                                class="btn btn-primary btn-sm">Update</button>
 
 
                         </div>
@@ -110,9 +104,11 @@
                         data = data + "<td>" + value.institute + "</td>"
                         data = data + "<td>"
                         data = data +
-                            "<button type='submit' class='btn btn-primary btn-sm mr-2'>edit</button>"
+                            "<button type='submit' onclick='editDate(" + value.id +
+                            ")' class='btn btn-primary btn-sm mr-2'>edit</button>"
                         data = data +
-                            "<button type='submit' class='btn btn-danger btn-sm mr-2'>delete</button>"
+                            "<button type='submit' onclick='deleteDate(" + value.id +
+                            ")' class='btn btn-danger btn-sm mr-2'>delete</button>"
                         data = data + "</td>"
                         data = data + "</tr>"
                     })
@@ -134,7 +130,7 @@
         }
         //  data clear section end
 
-        // add data section start
+        // store data section start
 
         function addDate() {
             var name = $('#name').val();
@@ -155,16 +151,94 @@
                     alldata();
                     console.log('successfully dada added');
                 },
-                error:function(error){
+                error: function(error) {
+                    $('#nameError').text(error.responseJSON.errors.name);
+                    $('#titleError').text(error.responseJSON.errors.title);
+                    $('#instituteError').text(error.responseJSON.errors.institute);
+                }
+            })
+        }
+        // add data section end
+
+
+        // edit data section start
+        function editDate(id) {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "teacher/edit/" + id,
+                success: function(data) {
+                    $('#addTeacher').hide();
+                    $('#updateTeacher').show();
+                    $('#addB').hide();
+                    $('#updateB').show();
+                    $('#id').val(data.id);
+                    $('#name').val(data.name);
+                    $('#title').val(data.title);
+                    $('#institute').val(data.institute);
+
+                    console.log(data);
+                }
+            })
+        }
+        //-------------------======= edit data section start ========---------
+        //-------------------------- update data section start ---------------
+
+        function updateDate() {
+            var id = $('#id').val();
+            var name = $('#name').val();
+            var title = $('#title').val();
+            var institute = $('#institute').val();
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                data: {
+                    name: name,
+                    title: title,
+                    institute: institute
+                },
+                url: "teacher/update/" + id,
+                success: function(data) {
+                    $('#addTeacher').show();
+                    $('#updateTeacher').hide();
+                    $('#addB').show();
+                    $('#updateB').hide();
+                    clearDate();
+                    alldata();
+                    console.log(data);
+                },
+                error: function(error) {
                     $('#nameError').text(error.responseJSON.errors.name);
                     $('#titleError').text(error.responseJSON.errors.title);
                     $('#instituteError').text(error.responseJSON.errors.institute);
                 }
             })
 
+
         }
 
-        // add data section end
+        //--------------------------- update data section end------------------
+
+        //--------------------------- delete data section start------------------
+
+        function deleteDate(id) {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "teacher/destory/" + id,
+                success: function(data) {
+                    $('#addTeacher').show();
+                    $('#updateTeacher').hide();
+                    $('#addB').show();
+                    $('#updateB').hide();
+                    clearDate();
+                    alldata();
+                    console.log(deleted);
+                }
+            })
+        }
+
+        //--------------------------- delete data section end------------------
     </script>
 </body>
 

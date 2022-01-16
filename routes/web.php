@@ -32,3 +32,9 @@ Route::get('teacher',[TeacherController::class,'index']);
 route::get('teacher/all',[TeacherController::class,'alldata']);
 
 route::post('teacher/store',[TeacherController::class,'dataStore']);
+
+route::get('teacher/edit/{id}',[TeacherController::class,'dataEdit']);
+
+route::post('teacher/update/{id}',[TeacherController::class,'dataUpdate']);
+
+route::get('teacher/destory/{id}',[TeacherController::class,'datadestory']);
