@@ -58,18 +58,22 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <label for="">Name</label>
-                                <input type="text" class="form-control" placeholder="Enter Name">
+                                <input type="text" class="form-control" id="name" placeholder="Enter Name">
+                                <span class="text-danger" id="nameError"></span>
                             </div><br>
                             <div class="form-group">
                                 <label for="">Title</label>
-                                <input type="text" class="form-control" placeholder="Enter Name">
+                                <input type="text" class="form-control" id="title" placeholder="Job Position">
+                                <span class="text-danger" id="titleError"></span>
                             </div><br>
                             <div class="form-group">
                                 <label for="">Institute</label>
-                                <input type="text" class="form-control" placeholder="Enter Name">
+                                <input type="text" class="form-control" id="institute" placeholder="Institute Name">
+                                <span class="text-danger" id="instituteError"></span>
                             </div><br>
 
-                            <button type="submit" id="addB" class="btn btn-primary btn-sm">Add</button>
+                            <button type="submit" id="addB" onclick="addDate()"
+                                class="btn btn-primary btn-sm">Add</button>
                             <button type="submit" id="updateB" class="btn btn-primary btn-sm">Update</button>
 
 
@@ -86,11 +90,10 @@
         $('#updateB').hide();
         $.ajaxSetup({
             headers: {
-                'X-CSRF-TOKEN': $('meta [name="csrf-token"]').attr('content')
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-
-        })
-
+        });
+        // all data read Start
         function alldata() {
             $.ajax({
                 type: "GET",
@@ -101,13 +104,15 @@
                     $.each(response, function(key, value) {
 
                         data = data + "<tr>"
-                        data = data + "<td>"+value.id+"</td>"
-                        data = data + "<td>"+value.name+"</td>"
-                        data = data + "<td>"+value.title+"</td>"
-                        data = data + "<td>"+value.institute+"</td>"
+                        data = data + "<td>" + value.id + "</td>"
+                        data = data + "<td>" + value.name + "</td>"
+                        data = data + "<td>" + value.title + "</td>"
+                        data = data + "<td>" + value.institute + "</td>"
                         data = data + "<td>"
-                        data = data + "<button type='submit' class='btn btn-primary btn-sm mr-2'>edit</button>"
-                        data = data + "<button type='submit' class='btn btn-danger btn-sm mr-2'>delete</button>"
+                        data = data +
+                            "<button type='submit' class='btn btn-primary btn-sm mr-2'>edit</button>"
+                        data = data +
+                            "<button type='submit' class='btn btn-danger btn-sm mr-2'>delete</button>"
                         data = data + "</td>"
                         data = data + "</tr>"
                     })
@@ -116,6 +121,50 @@
             })
         }
         alldata();
+        // all data read end
+
+        //  data clear section start
+        function clearDate() {
+            $('#name').val('');
+            $('#title').val('');
+            $('#institute').val('');
+            $('#nameError').text('');
+            $('#titleError').text('');
+            $('#instituteError').text('');
+        }
+        //  data clear section end
+
+        // add data section start
+
+        function addDate() {
+            var name = $('#name').val();
+            var title = $('#title').val();
+            var institute = $('#institute').val();
+
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                data: {
+                    name: name,
+                    title: title,
+                    institute: institute
+                },
+                url: "teacher/store",
+                success: function(data) {
+                    clearDate();
+                    alldata();
+                    console.log('successfully dada added');
+                },
+                error:function(error){
+                    $('#nameError').text(error.responseJSON.errors.name);
+                    $('#titleError').text(error.responseJSON.errors.title);
+                    $('#instituteError').text(error.responseJSON.errors.institute);
+                }
+            })
+
+        }
+
+        // add data section end
     </script>
 </body>
 

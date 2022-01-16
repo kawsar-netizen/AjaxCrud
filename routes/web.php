@@ -30,3 +30,5 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('teacher',[TeacherController::class,'index']);
 
 route::get('teacher/all',[TeacherController::class,'alldata']);
+
+route::post('teacher/store',[TeacherController::class,'dataStore']);
