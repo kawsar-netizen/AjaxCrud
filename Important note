@@ -1,2 +1,0 @@
-//=============  how to menu bar active ....like ===================================
-{{ request()->segment(1) == 'about' ? 'active' : '' }}" href="{{ route('about') }}
